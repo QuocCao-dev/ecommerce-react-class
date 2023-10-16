@@ -63,13 +63,13 @@ const NavUi = ({ cartItemsCount }: Props) => {
           </div>
 
           <div className="lg:hidden flex items-center space-x-2">
-            {/* <CartIcon cartItems={cartItemsCount} /> */}
+            <CartIcon cartItems={cartItemsCount} /> 
 
             <IconButton
               variant="text"
               color="blue-gray"
               className="lg:hidden"
-              //   onClick={() => setOpen(!open)}
+                onClick={() => setOpen(!open)}
             >
               {true ? (
                 <XMarkIcon className="h-6 w-6" strokeWidth={2} />
@@ -81,11 +81,11 @@ const NavUi = ({ cartItemsCount }: Props) => {
         </div>
       </MaterialNav>
       <div className="lg:hidden">
-        {/* <MobileNav
+         <MobileNav
           menuItems={menuItems}
           onClose={() => setOpen(false)}
           open={open}
-        /> */}
+        /> 
       </div>
     </>
   );
