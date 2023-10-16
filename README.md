@@ -311,3 +311,90 @@ const ProfileMenu = ({ menuItems }: Props) => {
 
 export default ProfileMenu;
 ```
+---
+`auth/signup/page.tsx`
+```tsx
+"use client";
+
+import AuthFormContainer from "@/app/components/AuthFormContainer";
+import { Button, Input } from "@material-tailwind/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+
+export default function SignUp() {
+  const formErrors: string[] = [];
+
+  return (
+    <AuthFormContainer title="Create New Account">
+      <Input name="name" label="Name" crossOrigin={undefined} />
+      <Input name="email" label="Email" crossOrigin={undefined} />
+      <Input
+        name="password"
+        label="Password"
+        type="password"
+        crossOrigin={undefined}
+      />
+      <Button type="submit" className="w-full">
+        Sign up
+      </Button>
+      <div className="">
+        {formErrors.map((err) => {
+          return (
+            <div key={err} className="flex items-center space-x-1 text-red-500">
+              <XMarkIcon className="w-4 h-4" />
+              <p className="text-xs">{err}</p>
+            </div>
+          );
+        })}
+      </div>
+    </AuthFormContainer>
+  );
+}
+
+```
+
+---
+
+`auth/layout.tsx`
+```tsx
+type Props = {
+  children: React.ReactNode;
+};
+
+const AuthLayout = ({ children }: Props) => {
+  return (
+    <div className="flex items-center justify-center h-screen">{children}</div>
+  );
+};
+
+export default AuthLayout;
+
+```
+
+---
+
+`app/components/AuthFormContainer.tsx`
+```tsx
+import React, { FormEventHandler, ReactNode } from "react";
+
+interface Props {
+  children: ReactNode;
+  onSubmit?: FormEventHandler<HTMLFormElement>;
+  title: string;
+}
+
+export default function AuthFormContainer({
+  title,
+  children,
+  onSubmit,
+}: Props) {
+  return (
+    <form
+      onSubmit={onSubmit}
+      className="p-6 space-y-6 bg-white rounded-md shadow-md w-96"
+    >
+      <h3 className="font-semibold text-center">{title}</h3>
+      {children}
+    </form>
+  );
+}
+```
