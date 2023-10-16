@@ -12,6 +12,7 @@ import Link from "next/link";
 
 import CartIcon from "@/app/components/CartIcon";
 import MobileNav from "@/app/components/MobileNav";
+import ProfileMenu from "@/app/components/ProfileMenu";
 
 export const menuItems = [
   {
@@ -52,7 +53,7 @@ const NavUi = ({ cartItemsCount }: Props) => {
 
           <div className="items-center hidden gap-2 lg:flex">
             <CartIcon cartItems={cartItemsCount} />
-            {/* <ProfileMenu menuItems={menuItems} /> */}
+            <ProfileMenu menuItems={menuItems} />
             <Link className="px-4 py-1" href="/auth/signin">
               Sign in
             </Link>
