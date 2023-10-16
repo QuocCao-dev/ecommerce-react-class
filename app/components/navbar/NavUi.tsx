@@ -1,33 +1,27 @@
-```bash
-npm i @material-tailwind/react
-npm i heroicons/react
-
-```
-
-in file `app/components/navbar/NavUi.tsx`, create a file
-```tsx
 "use client";
 
-import { Navbar as MaterialNav, IconButton } from "@material-tailwind/react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
-  UserCircleIcon,
-  ShoppingBagIcon,
-  XMarkIcon,
   Bars3Icon,
+  ShoppingBagIcon,
+  UserCircleIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { IconButton, Navbar as MaterialNav } from "@material-tailwind/react";
+import Link from "next/link";
 
 import CartIcon from "@/app/components/CartIcon";
+import MobileNav from "@/app/components/MobileNav";
 
 export const menuItems = [
   {
     href: "/profile",
-    icon: <UserCircleIcon className="h-4 w-4" />,
+    icon: <UserCircleIcon className="w-4 h-4" />,
     label: "My Profile",
   },
   {
     href: "/profile/orders",
-    icon: <ShoppingBagIcon className="h-4 w-4" />,
+    icon: <ShoppingBagIcon className="w-4 h-4" />,
     label: "Orders",
   },
 ];
@@ -37,9 +31,17 @@ type Props = {
 };
 
 const NavUi = ({ cartItemsCount }: Props) => {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onResize = () => window.innerWidth > 960 && setOpen(false);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   return (
     <>
-      <MaterialNav className="mx-auto max-w-screen-xl px-4 py-2">
+      <MaterialNav className="max-w-screen-xl px-4 py-2 mx-auto">
         <div className="flex items-center justify-between text-blue-gray-900">
           <Link
             href="/"
@@ -48,66 +50,46 @@ const NavUi = ({ cartItemsCount }: Props) => {
             Next Ecom
           </Link>
 
-          <div className="hidden lg:flex gap-2 items-center">
+          <div className="items-center hidden gap-2 lg:flex">
             <CartIcon cartItems={cartItemsCount} />
             {/* <ProfileMenu menuItems={menuItems} /> */}
             <Link className="px-4 py-1" href="/auth/signin">
               Sign in
             </Link>
             <Link
-              className="bg-blue-500 text-white px-4 py-1 rounded"
+              className="px-4 py-1 text-white bg-blue-500 rounded"
               href="/auth/signup"
             >
               Sign up
             </Link>
           </div>
 
-          <div className="lg:hidden flex items-center space-x-2">
-            {/* <CartIcon cartItems={cartItemsCount} /> */}
+          <div className="flex items-center space-x-2 lg:hidden">
+            <CartIcon cartItems={cartItemsCount} />
 
             <IconButton
               variant="text"
               color="blue-gray"
               className="lg:hidden"
-              //   onClick={() => setOpen(!open)}
+              onClick={() => setOpen(!open)}
             >
-              {true ? (
-                <XMarkIcon className="h-6 w-6" strokeWidth={2} />
+              {open ? (
+                <XMarkIcon className="w-6 h-6" strokeWidth={2} />
               ) : (
-                <Bars3Icon className="h-6 w-6" strokeWidth={2} />
+                <Bars3Icon className="w-6 h-6" strokeWidth={2} />
               )}
             </IconButton>
           </div>
         </div>
       </MaterialNav>
       <div className="lg:hidden">
-        {/* <MobileNav
+        <MobileNav
           menuItems={menuItems}
           onClose={() => setOpen(false)}
           open={open}
-        /> */}
+        />
       </div>
     </>
   );
 };
 export default NavUi;
-
-```
-
----
-
-in file `app/components/navbar/Navbar.tsx`, create a file
-```tsx
-import NavUi from "./NavUi";
-
-const Navbar = () => {
-  return (
-    <div>
-      <NavUi cartItemsCount={1} />
-    </div>
-  );
-};
-export default Navbar;
-```
-
----
