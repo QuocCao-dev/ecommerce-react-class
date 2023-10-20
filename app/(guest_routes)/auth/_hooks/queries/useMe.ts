@@ -1,4 +1,4 @@
-import useMeStore from "@/app/auth/stores/me";
+import useMeStore from "@/app/(guest_routes)/auth/_stores/me";
 
 const useMe = () => {
   const me = useMeStore((state) => state.me);

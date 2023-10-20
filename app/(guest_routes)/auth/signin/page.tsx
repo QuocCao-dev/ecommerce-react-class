@@ -3,14 +3,14 @@
 import {
   SignInFormValues,
   signInSchema,
-} from "@/app/auth/_validation-schema/signin";
+} from "@/app/(guest_routes)/auth/_validation-schema/signin";
 import AuthFormContainer from "@/app/components/AuthFormContainer";
 import Input from "@/app/components/ui/forms/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@material-tailwind/react/components/Button";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { useSignIn } from "@/app/auth/hooks/mutations/useSignIn";
+import { useSignIn } from "@/app/(guest_routes)/auth/_hooks/mutations/useSignIn";
 import { useRouter } from "next/navigation";
 
 const SignInPage = () => {

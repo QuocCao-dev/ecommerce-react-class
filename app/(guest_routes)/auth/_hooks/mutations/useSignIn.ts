@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { signInService } from "@/app/auth/_services/auth";
-import { TSignInPayload } from "@/app/auth/types";
-import useMe from "@/app/auth/hooks/queries/useMe";
+import { signInService } from "@/app/(guest_routes)/auth/_services/auth";
+import { TSignInPayload } from "@/app/(guest_routes)/auth/_types";
+import useMe from "@/app/(guest_routes)/auth/_hooks/queries/useMe";
 import { useLocalStorage } from "react-use";
 import _omit from "lodash/omit";
 
