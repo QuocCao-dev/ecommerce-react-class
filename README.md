@@ -398,3 +398,32 @@ export default function AuthFormContainer({
   );
 }
 ```
+---
+
+`app/auth/signup/page.tsx`
+```tsx
+"use client";
+
+import AuthFormContainer from "@/app/components/AuthFormContainer";
+import Input from "@/app/components/ui/forms/Input";
+import Button from "@material-tailwind/react/components/Button";
+import Link from "next/link";
+
+const SignInPage = () => {
+  return (
+    <AuthFormContainer title="Create New Account" onSubmit={() => {}}>
+      <Input name="email" label="Email" />
+      <Input name="password" label="Password" type="password" />
+      <Button type="submit" className="w-full" disabled={false}>
+        Sign in
+      </Button>
+      <div className="flex items-center justify-between">
+        <Link href="/auth/signup">Sign up</Link>
+        <Link href="/auth/forget-password">Forget password</Link>
+      </div>
+    </AuthFormContainer>
+  );
+};
+export default SignInPage;
+
+```
