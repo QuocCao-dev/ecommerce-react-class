@@ -11,6 +11,7 @@ import Button from "@material-tailwind/react/components/Button";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useSignIn } from "@/app/auth/hooks/mutations/useSignIn";
+import { useRouter } from "next/navigation";
 
 const SignInPage = () => {
   const { control, handleSubmit } = useForm<SignInFormValues>({
@@ -21,11 +22,12 @@ const SignInPage = () => {
     },
   });
   const { mutate: $signIn } = useSignIn();
+  const router = useRouter();
 
   const handleSignIn = (values: SignInFormValues) => {
     $signIn(values, {
-      onSuccess: () => {
-        console.log("on success");
+      onSuccess() {
+        router.push("/");
       },
     });
   };
