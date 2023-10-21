@@ -1,9 +1,10 @@
 import { PropsWithChildren } from "react";
+import AdminSidebar from "@/app/components/AdminSidebar";
 
 type Props = PropsWithChildren<{}>;
 
 const AdminLayout = ({ children }: Props) => {
-  return <div>{children}</div>;
+  return <AdminSidebar>{children}</AdminSidebar>;
 };
 
 export default AdminLayout;
