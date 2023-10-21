@@ -855,3 +855,431 @@ export default function SearchForm() {
 }
 
 ```
+
+---
+ImageSelector
+```tsx
+"use client";
+import React, { ChangeEventHandler } from "react";
+import { TrashIcon, PhotoIcon } from "@heroicons/react/24/outline";
+import SelectedImageThumb from "@/app/ui/SelectedImageThumb";
+import ImageInput from "@/app/ui/ImageInput";
+
+interface Props {
+  id: string;
+  images?: string[];
+  multiple?: boolean;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  onRemove?(index: number): void;
+}
+
+export default function ImageSelector({
+  id,
+  images,
+  onChange,
+  onRemove,
+  multiple,
+}: Props) {
+  const icon = multiple ? (
+    <div className="relative">
+      <PhotoIcon className="w-8 h-8 bg-white" />
+      <PhotoIcon className="w-8 h-8 absolute -top-2 -right-2 -z-10" />
+    </div>
+  ) : (
+    <PhotoIcon className="w-8 h-8" />
+  );
+
+  return (
+    <div className="flex items-center space-x-4">
+      {images?.map((img, index) => {
+        return (
+          <div key={index} className="relative">
+            <SelectedImageThumb src={img} />
+            {multiple ? (
+              <div
+                onClick={() => onRemove?.(index)}
+                className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white rounded cursor-pointer"
+              >
+                <TrashIcon className="w-4 h-4" />
+              </div>
+            ) : null}
+          </div>
+        );
+      })}
+
+      <ImageInput id={id} onChange={onChange} multiple={multiple}>
+        {icon}
+      </ImageInput>
+    </div>
+  );
+}
+
+```
+
+---
+ProductForm
+```tsx
+"use client";
+import {
+  Button,
+  Input,
+  Option,
+  Select,
+  Textarea,
+} from "@material-tailwind/react";
+import React, {
+  useEffect,
+  useState,
+  useTransition,
+  ChangeEventHandler,
+} from "react";
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import categories from "@/app/utils/categories";
+import ImageSelector from "./ImageSelector";
+
+interface Props {
+  initialValue?: InitialValue;
+  onSubmit(values: any): void;
+}
+
+export interface InitialValue {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  images?: string[];
+  bulletPoints: string[];
+  mrp: number;
+  salePrice: number;
+  category: string;
+  quantity: number;
+}
+
+const defaultValue = {
+  title: "",
+  description: "",
+  bulletPoints: [""],
+  mrp: 0,
+  salePrice: 0,
+  category: "",
+  quantity: 0,
+};
+
+export default function ProductForm(props: Props) {
+  const { onSubmit, initialValue } = props;
+  const [isPending, startTransition] = useTransition();
+  const [images, setImages] = useState<File[]>([]);
+  const [thumbnail, setThumbnail] = useState<File>();
+  const [isForUpdate, setIsForUpdate] = useState(false);
+  const [productInfo, setProductInfo] = useState({ ...defaultValue });
+  const [thumbnailSource, setThumbnailSource] = useState<string[]>();
+  const [productImagesSource, setProductImagesSource] = useState<string[]>();
+
+  const fields = productInfo.bulletPoints;
+
+  const addMoreBulletPoints = () => {
+    setProductInfo({
+      ...productInfo,
+      bulletPoints: [...productInfo.bulletPoints, ""],
+    });
+  };
+
+  const removeBulletPoint = (indexToRemove: number) => {
+    const points = [...productInfo.bulletPoints];
+    const filteredPoints = points.filter((_, index) => index !== indexToRemove);
+    setProductInfo({
+      ...productInfo,
+      bulletPoints: [...filteredPoints],
+    });
+  };
+
+  const updateBulletPointValue = (value: string, index: number) => {
+    const oldValues = [...fields];
+    oldValues[index] = value;
+
+    setProductInfo({ ...productInfo, bulletPoints: [...oldValues] });
+  };
+
+  const removeImage = async (index: number) => {
+    const newImages = images.filter((_, idx) => idx !== index);
+    setImages([...newImages]);
+  };
+
+  const getBtnTitle = () => {
+    if (isForUpdate) return isPending ? "Updating" : "Update";
+    return isPending ? "Creating" : "Create";
+  };
+
+  useEffect(() => {
+    if (initialValue) {
+      setProductInfo({ ...initialValue });
+      setThumbnailSource([initialValue.thumbnail]);
+      setProductImagesSource(initialValue.images);
+      setIsForUpdate(true);
+    }
+  }, []);
+
+  const onImagesChange: ChangeEventHandler<HTMLInputElement> = ({ target }) => {
+    const files = target.files;
+    if (files) {
+      const newImages = Array.from(files).map((item) => item);
+      const oldImages = productImagesSource || [];
+      setImages([...images, ...newImages]);
+      setProductImagesSource([
+        ...oldImages,
+        ...newImages.map((file) => URL.createObjectURL(file)),
+      ]);
+    }
+  };
+
+  const onThumbnailChange: ChangeEventHandler<HTMLInputElement> = ({
+    target,
+  }) => {
+    const files = target.files;
+    if (files) {
+      const file = files[0];
+      setThumbnail(file);
+      setThumbnailSource([URL.createObjectURL(file)]);
+    }
+  };
+
+  return (
+    <div className="p-4 max-w-3xl mx-auto">
+      <h1 className="mb-2 text-xl">Add new product</h1>
+
+      <form
+        action={() =>
+          startTransition(async () => {
+            await onSubmit({ ...productInfo, images, thumbnail });
+          })
+        }
+        className="space-y-6"
+      >
+        <div className="space-y-4">
+          <h3>Poster</h3>
+          <ImageSelector
+            id="thumb"
+            images={thumbnailSource}
+            onChange={onThumbnailChange}
+          />
+
+          <h3>Images</h3>
+          <ImageSelector
+            multiple
+            id="images"
+            images={productImagesSource}
+            onRemove={removeImage}
+            onChange={onImagesChange}
+          />
+        </div>
+
+        <Input
+          label="Title"
+          value={productInfo.title}
+          onChange={({ target }) =>
+            setProductInfo({ ...productInfo, title: target.value })
+          }
+          crossOrigin={undefined}
+        />
+
+        <Textarea
+          className="h-52"
+          label="Description"
+          value={productInfo.description}
+          onChange={({ target }) =>
+            setProductInfo({ ...productInfo, description: target.value })
+          }
+        />
+
+        <Select
+          onChange={(category) => {
+            if (category) setProductInfo({ ...productInfo, category });
+          }}
+          value={productInfo.category}
+          label="Select Category"
+        >
+          {categories.map((c) => (
+            <Option value={c} key={c}>
+              {c}
+            </Option>
+          ))}
+        </Select>
+
+        <div className="flex space-x-4">
+          <div className="space-y-4 flex-1">
+            <h3>Price</h3>
+
+            <Input
+              value={productInfo.mrp}
+              label="MRP"
+              onChange={({ target }) => {
+                const mrp = +target.value;
+                setProductInfo({ ...productInfo, mrp });
+              }}
+              className="mb-4"
+              crossOrigin={undefined}
+            />
+            <Input
+              value={productInfo.salePrice}
+              label="Sale Price"
+              onChange={({ target }) => {
+                const salePrice = +target.value;
+                setProductInfo({ ...productInfo, salePrice });
+              }}
+              className="mb-4"
+              crossOrigin={undefined}
+            />
+          </div>
+
+          <div className="space-y-4 flex-1">
+            <h3>Stock</h3>
+
+            <Input
+              value={productInfo.quantity}
+              label="Qty"
+              onChange={({ target }) => {
+                const quantity = +target.value;
+                if (!isNaN(quantity))
+                  setProductInfo({ ...productInfo, quantity });
+              }}
+              className="mb-4"
+              crossOrigin={undefined}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3>Bullet points</h3>
+          {fields.map((field, index) => (
+            <div key={index} className="flex items-center">
+              <Input
+                type="text"
+                value={field}
+                label={`Bullet point ${index + 1}`}
+                onChange={({ target }) =>
+                  updateBulletPointValue(target.value, index)
+                }
+                className="mb-4"
+                crossOrigin={undefined}
+              />
+              {fields.length > 1 ? (
+                <button
+                  onClick={() => removeBulletPoint(index)}
+                  type="button"
+                  className="ml-2"
+                >
+                  <TrashIcon className="w-5 h-5" />
+                </button>
+              ) : null}
+            </div>
+          ))}
+
+          <button
+            disabled={isPending}
+            type="button"
+            onClick={addMoreBulletPoints}
+            className="flex items-center space-x-1 text-gray-800 ml-auto"
+          >
+            <PlusIcon className="w-4 h-4" />
+            <span>Add more</span>
+          </button>
+        </div>
+
+        <Button disabled={isPending} type="submit">
+          {getBtnTitle()}
+        </Button>
+      </form>
+    </div>
+  );
+}
+
+```
+
+---
+
+ImageInput
+```tsx
+import React, { InputHTMLAttributes, ReactNode } from "react";
+
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
+  children?: ReactNode;
+}
+
+export default function ImageInput({ id, onChange, children, ...rest }: Props) {
+  if (children) rest.hidden = true;
+  else rest.hidden = false;
+
+  return (
+    <label htmlFor={id}>
+      <input
+        type="file"
+        id={id}
+        onChange={onChange}
+        accept="image/*"
+        {...rest}
+      />
+      <div className="w-20 h-20 rounded flex items-center justify-center border border-gray-700 cursor-pointer">
+        {children}
+      </div>
+    </label>
+  );
+}
+
+```
+
+---
+
+SelectedImageThumb
+```tsx
+import Image from "next/image";
+
+interface Props {
+  src?: string;
+}
+
+const SelectedImageThumb = ({ src }: Props) => {
+  if (!src) return null;
+
+  return (
+    <div className="w-20 h-20 relative">
+      <Image
+        src={src}
+        alt="product"
+        fill
+        className="object-fill rounded bg-blue-gray-200"
+      />
+    </div>
+  );
+};
+
+export default SelectedImageThumb;
+
+```
+---
+categories
+```ts
+const categories = [
+  "Electronics",
+  "Fashion",
+  "Home and Kitchen",
+  "Health and Beauty",
+  "Sports and Fitness",
+  "Baby and Kids",
+  "Automotive",
+  "Books, Music, and Movies",
+  "Office and School Supplies",
+  "Pet Supplies",
+  "Home Improvement",
+  "Outdoor and Garden",
+  "Art and Crafts",
+  "Food and Beverages",
+  "Jewelry and Watches",
+  "Travel and Luggage",
+  "Gifts and Occasions",
+  "Industrial and Scientific",
+  "Electronics Accessories",
+];
+
+export default categories;
+
+```

@@ -1,4 +1,12 @@
+"use client";
+import ProductForm from "@/app/components/ProductForm";
+
 const Create = () => {
-  return <div>Create</div>;
+  return (
+    <div>
+      <ProductForm onSubmit={function () {}} />
+    </div>
+  );
 };
+
 export default Create;
