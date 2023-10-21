@@ -4,7 +4,7 @@ import {
   SignInFormValues,
   signInSchema,
 } from "@/app/(guest_routes)/auth/_validation-schema/signin";
-import AuthFormContainer from "@/app/components/AuthFormContainer";
+import FormContainer from "@/app/components/FormContainer";
 import Input from "@/app/components/ui/forms/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@material-tailwind/react/components/Button";
@@ -33,7 +33,7 @@ const SignInPage = () => {
   };
 
   return (
-    <AuthFormContainer
+    <FormContainer
       title="Create New Account"
       onSubmit={handleSubmit(handleSignIn)}
     >
@@ -51,7 +51,7 @@ const SignInPage = () => {
         <Link href="/auth/signup">Sign up</Link>
         <Link href="/auth/forget-password">Forget password</Link>
       </div>
-    </AuthFormContainer>
+    </FormContainer>
   );
 };
 export default SignInPage;

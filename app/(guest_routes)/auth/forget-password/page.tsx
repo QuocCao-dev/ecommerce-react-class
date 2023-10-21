@@ -1,6 +1,6 @@
 "use client";
 
-import FormContainer from "@/app/components/AuthFormContainer";
+import FormContainer from "@/app/components/FormContainer";
 import Input from "@/app/components/ui/forms/Input";
 import Button from "@material-tailwind/react/components/Button";
 import Link from "next/link";

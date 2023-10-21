@@ -6,11 +6,7 @@ interface Props {
   title: string;
 }
 
-export default function AuthFormContainer({
-  title,
-  children,
-  onSubmit,
-}: Props) {
+export default function FormContainer({ title, children, onSubmit }: Props) {
   return (
     <form
       onSubmit={onSubmit}

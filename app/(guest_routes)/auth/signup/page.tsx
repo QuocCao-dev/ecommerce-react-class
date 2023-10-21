@@ -1,6 +1,6 @@
 "use client";
 
-import AuthFormContainer from "@/app/components/AuthFormContainer";
+import FormContainer from "@/app/components/FormContainer";
 import { Button } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { FormProvider, useForm } from "react-hook-form";
@@ -24,7 +24,7 @@ export default function SignUp() {
 
   return (
     <FormProvider {...form}>
-      <AuthFormContainer
+      <FormContainer
         title="Create New Account"
         onSubmit={handleSubmit(handleSignUp)}
       >
@@ -39,7 +39,7 @@ export default function SignUp() {
         <Button type="submit" className="w-full">
           Sign up
         </Button>
-      </AuthFormContainer>
+      </FormContainer>
     </FormProvider>
   );
 }

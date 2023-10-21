@@ -11,6 +11,6 @@ const GuestLayout = ({ children }: Props) => {
 
   if (me) redirect("/profile");
 
-  return <div className="">{children}</div>;
+  return <div>{children}</div>;
 };
 export default GuestLayout;
