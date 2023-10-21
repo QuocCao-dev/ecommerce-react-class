@@ -1047,14 +1047,7 @@ export default function ProductForm(props: Props) {
     <div className="p-4 max-w-3xl mx-auto">
       <h1 className="mb-2 text-xl">Add new product</h1>
 
-      <form
-        action={() =>
-          startTransition(async () => {
-            await onSubmit({ ...productInfo, images, thumbnail });
-          })
-        }
-        className="space-y-6"
-      >
+      <form className="space-y-6">
         <div className="space-y-4">
           <h3>Poster</h3>
           <ImageSelector
