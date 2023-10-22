@@ -17,21 +17,21 @@ import SearchForm from "./SearchForm";
 export type TProduct = {
   id: string;
   title: string;
-  thumbnail: string;
-  description: string;
-  price: {
-    mrp: number;
-    salePrice: number;
-    saleOff: number;
+  thumbnail: {
+    id: string;
+    url: string;
   };
+  description: string;
+  price: number;
   category: string;
   quantity: number;
+  sale: number;
 };
 
 const formatPrice = (amount: number) => {
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "INR",
+    currency: "VND",
   });
 
   return formatter.format(amount);
@@ -123,12 +123,14 @@ const ProductTable = (props: Props) => {
                 <tr key={id}>
                   <td className={classes}>
                     <div className="flex items-center gap-3">
-                      <Avatar
-                        src={thumbnail}
-                        alt={title}
-                        size="md"
-                        variant="rounded"
-                      />
+                      {thumbnail?.url ? (
+                        <Avatar
+                          src={thumbnail?.url}
+                          alt={title}
+                          size="md"
+                          variant="rounded"
+                        />
+                      ) : null}
                       <Link href={`/${title}/${id}`}>
                         <Typography
                           variant="small"
@@ -146,7 +148,7 @@ const ProductTable = (props: Props) => {
                       color="blue-gray"
                       className="font-normal"
                     >
-                      {formatPrice(price.mrp)}
+                      {/* {formatPrice(price.mrp)} */}
                     </Typography>
                   </td>
                   <td className={classes}>
@@ -155,7 +157,7 @@ const ProductTable = (props: Props) => {
                       color="blue-gray"
                       className="font-normal"
                     >
-                      {formatPrice(price.salePrice)}
+                      {formatPrice(item.sale)}
                     </Typography>
                   </td>
                   <td className={classes}>
