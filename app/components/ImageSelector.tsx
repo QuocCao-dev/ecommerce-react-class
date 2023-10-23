@@ -46,9 +46,11 @@ export default function ImageSelector({
         );
       })}
 
-      <ImageInput id={id} onChange={onChange} multiple={multiple}>
-        {icon}
-      </ImageInput>
+      {!multiple && images && images?.length >= 1 ? null : (
+        <ImageInput id={id} onChange={onChange} multiple={multiple}>
+          {icon}
+        </ImageInput>
+      )}
     </div>
   );
 }

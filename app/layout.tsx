@@ -14,7 +14,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const queryClient = useRef(new QueryClient());
+  const queryClient = useRef(
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchOnWindowFocus: false,
+          retry: false,
+        },
+      },
+    })
+  );
 
   return (
     <html lang="en">

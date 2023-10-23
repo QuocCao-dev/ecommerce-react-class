@@ -1,20 +1,13 @@
 "use client";
-import {
-  Button,
-  Input,
-  Option,
-  Select,
-  Textarea,
-} from "@material-tailwind/react";
-import React, {
-  useEffect,
-  useState,
-  useTransition,
-  ChangeEventHandler,
-} from "react";
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import categories from "@/app/utils/categories";
-import ImageSelector from "./ImageSelector";
+import { Button } from "@material-tailwind/react";
+import { use, useEffect, useTransition } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import ControlBulletPoints from "./ui/forms/ControlBulletPoints";
+import ControlImagesSelector from "./ui/forms/ControlImagesSelector";
+import ControlInput from "./ui/forms/ControlInput";
+import ControlSelect from "./ui/forms/ControlSelect";
+import ControlTextarea from "./ui/forms/ControlTextarea";
 
 interface Props {
   initialValue?: InitialValue;
@@ -26,10 +19,9 @@ export interface InitialValue {
   title: string;
   description: string;
   thumbnail: string;
-  images?: string[];
   bulletPoints: string[];
-  mrp: number;
-  salePrice: number;
+  price: number;
+  sale: number;
   category: string;
   quantity: number;
 }
@@ -37,9 +29,8 @@ export interface InitialValue {
 const defaultValue = {
   title: "",
   description: "",
-  bulletPoints: [""],
-  mrp: 0,
-  salePrice: 0,
+  price: 0,
+  sale: 0,
   category: "",
   quantity: 0,
 };
@@ -47,225 +38,82 @@ const defaultValue = {
 export default function ProductForm(props: Props) {
   const { onSubmit, initialValue } = props;
   const [isPending, startTransition] = useTransition();
-  const [images, setImages] = useState<File[]>([]);
-  const [thumbnail, setThumbnail] = useState<File>();
-  const [isForUpdate, setIsForUpdate] = useState(false);
-  const [productInfo, setProductInfo] = useState({ ...defaultValue });
-  const [thumbnailSource, setThumbnailSource] = useState<string[]>();
-  const [productImagesSource, setProductImagesSource] = useState<string[]>();
 
-  const fields = productInfo.bulletPoints;
-
-  const addMoreBulletPoints = () => {
-    setProductInfo({
-      ...productInfo,
-      bulletPoints: [...productInfo.bulletPoints, ""],
-    });
-  };
-
-  const removeBulletPoint = (indexToRemove: number) => {
-    const points = [...productInfo.bulletPoints];
-    const filteredPoints = points.filter((_, index) => index !== indexToRemove);
-    setProductInfo({
-      ...productInfo,
-      bulletPoints: [...filteredPoints],
-    });
-  };
-
-  const updateBulletPointValue = (value: string, index: number) => {
-    const oldValues = [...fields];
-    oldValues[index] = value;
-
-    setProductInfo({ ...productInfo, bulletPoints: [...oldValues] });
-  };
-
-  const removeImage = async (index: number) => {
-    const newImages = images.filter((_, idx) => idx !== index);
-    setImages([...newImages]);
-  };
-
-  const getBtnTitle = () => {
-    if (isForUpdate) return isPending ? "Updating" : "Update";
-    return isPending ? "Creating" : "Create";
-  };
+  const form = useForm({
+    defaultValues: {
+      ...defaultValue,
+      bulletPoints: [{ value: "" }, { value: "" }],
+      images: [],
+    },
+  });
+  const { handleSubmit } = form;
 
   useEffect(() => {
     if (initialValue) {
-      setProductInfo({ ...initialValue });
-      setThumbnailSource([initialValue.thumbnail]);
-      setProductImagesSource(initialValue.images);
-      setIsForUpdate(true);
+      form.reset({
+        ...initialValue,
+        bulletPoints: initialValue?.bulletPoints.map((value) => ({ value })),
+      });
     }
-  }, []);
+  }, [initialValue]);
 
-  const onImagesChange: ChangeEventHandler<HTMLInputElement> = ({ target }) => {
-    const files = target.files;
-    if (files) {
-      const newImages = Array.from(files).map((item) => item);
-      const oldImages = productImagesSource || [];
-      setImages([...images, ...newImages]);
-      setProductImagesSource([
-        ...oldImages,
-        ...newImages.map((file) => URL.createObjectURL(file)),
-      ]);
-    }
-  };
-
-  const onThumbnailChange: ChangeEventHandler<HTMLInputElement> = ({
-    target,
-  }) => {
-    const files = target.files;
-    if (files) {
-      const file = files[0];
-      setThumbnail(file);
-      setThumbnailSource([URL.createObjectURL(file)]);
-    }
+  const getBtnTitle = () => {
+    return isPending ? "Creating" : "Create";
   };
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <h1 className="mb-2 text-xl">Add new product</h1>
+    <FormProvider {...form}>
+      <div className="p-4 max-w-3xl mx-auto">
+        <h1 className="mb-2 text-xl">Add new product</h1>
 
-      <form
-        className="space-y-6"
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
-        <div className="space-y-4">
-          <h3>Poster</h3>
-          <ImageSelector
-            id="thumb"
-            images={thumbnailSource}
-            onChange={onThumbnailChange}
-          />
-
-          <h3>Images</h3>
-          <ImageSelector
-            multiple
-            id="images"
-            images={productImagesSource}
-            onRemove={removeImage}
-            onChange={onImagesChange}
-          />
-        </div>
-
-        <Input
-          label="Title"
-          value={productInfo.title}
-          onChange={({ target }) =>
-            setProductInfo({ ...productInfo, title: target.value })
-          }
-          crossOrigin={undefined}
-        />
-
-        <Textarea
-          className="h-52"
-          label="Description"
-          value={productInfo.description}
-          onChange={({ target }) =>
-            setProductInfo({ ...productInfo, description: target.value })
-          }
-        />
-
-        <Select
-          onChange={(category) => {
-            if (category) setProductInfo({ ...productInfo, category });
-          }}
-          value={productInfo.category}
-          label="Select Category"
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit((values) => console.log(values))}
         >
-          {categories.map((c) => (
-            <Option value={c} key={c}>
-              {c}
-            </Option>
-          ))}
-        </Select>
-
-        <div className="flex space-x-4">
-          <div className="space-y-4 flex-1">
-            <h3>Price</h3>
-
-            <Input
-              value={productInfo.mrp}
-              label="MRP"
-              onChange={({ target }) => {
-                const mrp = +target.value;
-                setProductInfo({ ...productInfo, mrp });
-              }}
-              className="mb-4"
-              crossOrigin={undefined}
+          <div className="space-y-4">
+            <h3>Poster</h3>
+            <ControlImagesSelector
+              id="thumb"
+              name="thumbnail"
+              multiple={false}
             />
-            <Input
-              value={productInfo.salePrice}
-              label="Sale Price"
-              onChange={({ target }) => {
-                const salePrice = +target.value;
-                setProductInfo({ ...productInfo, salePrice });
-              }}
-              className="mb-4"
-              crossOrigin={undefined}
-            />
+            <h3>Images</h3>
+            <ControlImagesSelector name="images" id="images" multiple />
           </div>
-
-          <div className="space-y-4 flex-1">
-            <h3>Stock</h3>
-
-            <Input
-              value={productInfo.quantity}
-              label="Qty"
-              onChange={({ target }) => {
-                const quantity = +target.value;
-                if (!isNaN(quantity))
-                  setProductInfo({ ...productInfo, quantity });
-              }}
-              className="mb-4"
-              crossOrigin={undefined}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3>Bullet points</h3>
-          {fields.map((field, index) => (
-            <div key={index} className="flex items-center">
-              <Input
-                type="text"
-                value={field}
-                label={`Bullet point ${index + 1}`}
-                onChange={({ target }) =>
-                  updateBulletPointValue(target.value, index)
-                }
-                className="mb-4"
-                crossOrigin={undefined}
-              />
-              {fields.length > 1 ? (
-                <button
-                  onClick={() => removeBulletPoint(index)}
-                  type="button"
-                  className="ml-2"
-                >
-                  <TrashIcon className="w-5 h-5" />
-                </button>
-              ) : null}
+          <ControlInput name="title" label="Title" />
+          <ControlTextarea
+            name="description"
+            className="h-52"
+            label="Description"
+          />
+          <ControlSelect
+            name="category"
+            label="Select Category"
+            options={categories}
+          />
+          <div className="flex space-x-4">
+            <div className="space-y-4 flex-1">
+              <h3>Price</h3>
+              <ControlInput name="price" label="Price" className="mb-4" />
+              <ControlInput name="sale" label="Sale Price" className="mb-4" />
             </div>
-          ))}
 
-          <button
-            disabled={isPending}
-            type="button"
-            onClick={addMoreBulletPoints}
-            className="flex items-center space-x-1 text-gray-800 ml-auto"
-          >
-            <PlusIcon className="w-4 h-4" />
-            <span>Add more</span>
-          </button>
-        </div>
+            <div className="space-y-4 flex-1">
+              <h3>Stock</h3>
+              <ControlInput name="quantity" label="Quantity" className="mb-4" />
+            </div>
+          </div>
 
-        <Button disabled={isPending} type="submit">
-          {getBtnTitle()}
-        </Button>
-      </form>
-    </div>
+          <div className="space-y-4">
+            <h3>Bullet points</h3>
+            <ControlBulletPoints name="bulletPoints" label="Bullet point" />
+          </div>
+
+          <Button disabled={isPending} type="submit">
+            {getBtnTitle()}
+          </Button>
+        </form>
+      </div>
+    </FormProvider>
   );
 }

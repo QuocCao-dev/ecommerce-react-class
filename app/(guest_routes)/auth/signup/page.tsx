@@ -4,7 +4,7 @@ import FormContainer from "@/app/components/FormContainer";
 import { Button } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { FormProvider, useForm } from "react-hook-form";
-import ControlInput from "@/app/components/ui/forms/Input";
+import ControlInput from "@/app/components/ui/forms/ControlInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, type SignUpSchema } from "../_validation-schema/signup";
 

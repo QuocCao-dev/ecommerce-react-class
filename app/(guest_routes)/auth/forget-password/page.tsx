@@ -1,7 +1,7 @@
 "use client";
 
 import FormContainer from "@/app/components/FormContainer";
-import Input from "@/app/components/ui/forms/Input";
+import Input from "@/app/components/ui/forms/ControlInput";
 import Button from "@material-tailwind/react/components/Button";
 import Link from "next/link";
 import { useForm } from "react-hook-form";

@@ -5,7 +5,7 @@ import {
   signInSchema,
 } from "@/app/(guest_routes)/auth/_validation-schema/signin";
 import FormContainer from "@/app/components/FormContainer";
-import Input from "@/app/components/ui/forms/Input";
+import Input from "@/app/components/ui/forms/ControlInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@material-tailwind/react/components/Button";
 import Link from "next/link";

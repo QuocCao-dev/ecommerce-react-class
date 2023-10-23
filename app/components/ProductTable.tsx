@@ -112,78 +112,81 @@ const ProductTable = (props: Props) => {
             </tr>
           </thead>
           <tbody>
-            {products.map((item, index) => {
-              const { id, thumbnail, title, price, quantity, category } = item;
-              const isLast = index === products.length - 1;
-              const classes = isLast
-                ? "p-4"
-                : "p-4 border-b border-blue-gray-50";
+            {products &&
+              products.length > 0 &&
+              products?.map((item, index) => {
+                const { id, thumbnail, title, price, quantity, category } =
+                  item;
+                const isLast = index === products.length - 1;
+                const classes = isLast
+                  ? "p-4"
+                  : "p-4 border-b border-blue-gray-50";
 
-              return (
-                <tr key={id}>
-                  <td className={classes}>
-                    <div className="flex items-center gap-3">
-                      {thumbnail?.url ? (
-                        <Avatar
-                          src={thumbnail?.url}
-                          alt={title}
-                          size="md"
-                          variant="rounded"
-                        />
-                      ) : null}
-                      <Link href={`/${title}/${id}`}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-bold"
-                        >
-                          {truncate(title, 30)}
+                return (
+                  <tr key={id}>
+                    <td className={classes}>
+                      <div className="flex items-center gap-3">
+                        {thumbnail?.url ? (
+                          <Avatar
+                            src={thumbnail?.url}
+                            alt={title}
+                            size="md"
+                            variant="rounded"
+                          />
+                        ) : null}
+                        <Link href={`/${title}/${id}`}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-bold"
+                          >
+                            {truncate(title, 30)}
+                          </Typography>
+                        </Link>
+                      </div>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {/* {formatPrice(price.mrp)} */}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {formatPrice(item.sale)}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <div className="w-max">
+                        <Typography variant="small" color="blue-gray">
+                          {quantity}
                         </Typography>
+                      </div>
+                    </td>
+                    <td className={classes}>
+                      <div className="w-max">
+                        <Typography variant="small" color="blue-gray">
+                          {category}
+                        </Typography>
+                      </div>
+                    </td>
+                    <td className={classes}>
+                      <Link href={`/products/update/${id}`}>
+                        <IconButton variant="text" color="blue-gray">
+                          <PencilIcon className="h-4 w-4" />
+                        </IconButton>
                       </Link>
-                    </div>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {/* {formatPrice(price.mrp)} */}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {formatPrice(item.sale)}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <div className="w-max">
-                      <Typography variant="small" color="blue-gray">
-                        {quantity}
-                      </Typography>
-                    </div>
-                  </td>
-                  <td className={classes}>
-                    <div className="w-max">
-                      <Typography variant="small" color="blue-gray">
-                        {category}
-                      </Typography>
-                    </div>
-                  </td>
-                  <td className={classes}>
-                    <Link href={`/products/update/${id}`}>
-                      <IconButton variant="text" color="blue-gray">
-                        <PencilIcon className="h-4 w-4" />
-                      </IconButton>
-                    </Link>
-                  </td>
-                </tr>
-              );
-            })}
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       </CardBody>
